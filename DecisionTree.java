@@ -30,12 +30,12 @@ public class WekaMain {
 
 			// Select twitter_score, RT_audience_cmt, RT_critic_score,
 			// RT_critic_cmt, RT_audience_score, YT_cmt_score, var_coll "
-			String selectTrainQuery = "Select twitter_score, RT_audience_cmt, RT_critic_score, RT_critic_cmt, RT_audience_score, YT_cmt_score, starpower, var_coll "
+			String selectTrainQuery = "Select twitter_score, RT_audience_cmt, RT_critic_score, RT_critic_cmt, RT_audience_score, YT_cmt_score, starpower, YT_views, YT_likes, YT_dislikes, var_coll "
 					+ " from augur_train2"; // assume that only these columns
 											// are used to create Instances to
 											// train and test data
-			String selectTestQuery = "Select twitter_score, RT_audience_cmt, RT_critic_score, RT_critic_cmt, RT_audience_score, YT_cmt_score, starpower, var_coll "
-					+ " from augur_test2"; // change test data table
+			String selectTestQuery = "Select twitter_score, RT_audience_cmt, RT_critic_score, RT_critic_cmt, RT_audience_score, YT_cmt_score, starpower, YT_views, YT_likes, YT_dislikes, var_coll "
+					+ " from augur_test2";
 			String selectMovieNames = "select movie_name from augur_test2";
 
 			iQuery.setQuery(selectTrainQuery);
@@ -61,8 +61,7 @@ public class WekaMain {
 
 			Instances copyTest = new Instances(test);
 
-			System.out
-					.println("Classifier : /////////// " + filteredClassifier);
+			System.out.println("Classifier : /////////// " + filteredClassifier);
 			String[] movieNames = new String[copyTest.numInstances()];
 			Class.forName(JDBC_DRIVER);
 			connection = DriverManager.getConnection(DB_URL, USER, PASS);
@@ -83,28 +82,42 @@ public class WekaMain {
 						.instance(i));
 				switch ((int) classLabel) {
 				case 0:
-					classType = "F";
+					classType = "L";
 					break;
 				case 1:
 					classType = "E";
 					break;
 				case 2:
-					classType = "D";
+					classType = "J";
 					break;
 				case 3:
-					classType = "C";
+					classType = "H";
 					break;
 				case 4:
-					classType = "B";
+					classType = "K";
 					break;
 				case 5:
+					classType = "I";
+					break;
+				case 6:
+					classType = "G";
+					break;
+				case 7:
+					classType = "C";
+					break;
+				case 8:
+					classType = "F";
+					break;
+				case 9:
 					classType = "A";
 					break;
+				case 10:
+					classType = "D";
+					break;
+				
 				}
 				classTypes[i] = classType;
-				System.out.println("classified class Label int : " + classLabel
-						+ ", string : " + classType);
-			}
+		}
 			updateClass(classTypes, movieNames);
 
 			eval.evaluateModel(filteredClassifier, test);
