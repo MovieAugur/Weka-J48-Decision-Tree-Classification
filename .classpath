@@ -4,5 +4,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="com.amazonaws.eclipse.sdk.AWS_JAVA_SDK"/>
 	<classpathentry kind="lib" path="/Users/shastri/Documents/workspace/AugurFramework/Classification"/>
+	<classpathentry kind="lib" path="/Users/shastri/mysql-connector-java-5.1.34-bin.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>
