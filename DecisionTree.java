@@ -1,3 +1,5 @@
+package augur.org;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -11,7 +13,7 @@ import weka.core.Instances;
 import weka.experiment.InstanceQuery;
 import weka.filters.unsupervised.attribute.StringToWordVector;
 
-public class WekaMain {
+public class DecisionTree {
 	static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
 	static final String DB_URL = "jdbc:mysql://54.86.203.127/TRAIN";
 
@@ -28,14 +30,12 @@ public class WekaMain {
 			iQuery.setUsername(USER);
 			iQuery.setPassword(PASS);
 
-			// Select twitter_score, RT_audience_cmt, RT_critic_score,
-			// RT_critic_cmt, RT_audience_score, YT_cmt_score, var_coll "
+			// The following are the list of attributes used to generate the decision tree. The last attribute in the class i.e., var_coll is taken as class. var_coll has 12 values ranging from A to L."
 			String selectTrainQuery = "Select twitter_score, RT_audience_cmt, RT_critic_score, RT_critic_cmt, RT_audience_score, YT_cmt_score, starpower, YT_views, YT_likes, YT_dislikes, var_coll "
-					+ " from augur_train2"; // assume that only these columns
-											// are used to create Instances to
-											// train and test data
+					+ " from augur_train2"; // assume that only these columns are used to create Instances to train data
+					
 			String selectTestQuery = "Select twitter_score, RT_audience_cmt, RT_critic_score, RT_critic_cmt, RT_audience_score, YT_cmt_score, starpower, YT_views, YT_likes, YT_dislikes, var_coll "
-					+ " from augur_test2";
+					+ " from augur_test2"; // the same list of attributes are selected from test data to classify new Instance
 			String selectMovieNames = "select movie_name from augur_test2";
 
 			iQuery.setQuery(selectTrainQuery);
@@ -74,6 +74,10 @@ public class WekaMain {
 					loopCounter++;
 				}
 			}
+
+			// Conversion of numeric classLabel to the assigned alphabets. 
+			// The alphabets associated with a classLabel are presented in the order in which tree is generated.
+			// We obtain this information from the output of classification function.
 			double classLabel = 0;
 			String[] classTypes = new String[copyTest.numInstances()];
 			String classType = "";
@@ -142,6 +146,9 @@ public class WekaMain {
 		}
 	}
 
+	// The classified value is written back to the database.
+	// This value is used by the prediction function to calculate box office collection.
+	// It is also accessed by GUI.
 	public static void updateClass(String[] classType, String[] movieNames) {
 		Connection connection = null;
 		PreparedStatement stmt = null;
@@ -180,5 +187,4 @@ public class WekaMain {
 			}
 		}
 	}
-
 }
